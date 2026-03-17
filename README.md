@@ -4,6 +4,14 @@
 Portfolio project demonstrating how to deploy a simple application in AWS and operate it like a Cloud Support Engineer.  
 Includes deployment steps, validation checks, monitoring, incident runbooks, and teardown steps.
 
+## Decisions
+- Compute: ECS Fargate
+- Container port: 8080
+- Health check: GET /health returns 200
+- Security groups:
+  - ALB SG: inbound 80/443 from internet, outbound to target SG on 8080
+  - Target SG: inbound 8080 from ALB SG only, outbound 0.0.0.0/0
+
 ## Architecture
 High-level target architecture. Final design may evolve.
 
@@ -13,6 +21,7 @@ High-level target architecture. Final design may evolve.
 - Logging and metrics: CloudWatch Logs and CloudWatch metrics and alarms
 
 A diagram will be added in `/diagrams`.
+See: [Architecture diagram](diagrams/architecture.md)
 
 ## Requirements
 - AWS account with an IAM user. MFA enabled

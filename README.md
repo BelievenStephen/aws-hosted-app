@@ -23,6 +23,14 @@ High-level target architecture. Final design may evolve.
 A diagram will be added in `/diagrams`.
 See: [Architecture diagram](diagrams/architecture.md)
 
+## Deployment and Operations Docs
+
+- [Deploy plan](docs/deploy-plan.md)
+- [Site down runbook](runbooks/site-down.md)
+- [5xx spike runbook](runbooks/5xx-spike.md)
+- [DNS issues runbook](runbooks/dns-issues.md)
+- [Security group blocking traffic runbook](runbooks/security-group-blocking-traffic.md)
+
 ## Requirements
 - AWS account with an IAM user. MFA enabled
 - Basic AWS knowledge. IAM, VPC, EC2 or ECS, CloudWatch

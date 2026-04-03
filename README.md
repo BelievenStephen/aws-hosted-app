@@ -7,24 +7,34 @@ Includes deployment steps, validation checks, monitoring, incident runbooks, and
 ## Decisions
 - Compute: ECS Fargate
 - Container port: 8080
-- Health check: GET /health returns 200
+- Health check: `GET /health` returns `200`
 - Security groups:
   - ALB SG: inbound 80/443 from internet, outbound to target SG on 8080
   - Target SG: inbound 8080 from ALB SG only, outbound 0.0.0.0/0
 
 ## Architecture
 High-level target architecture. Final design may evolve.
-
 - Application deployed as a container
 - Compute: ECS Fargate (or EC2 initially if needed)
 - Traffic: Application Load Balancer (ALB). May be added after a minimal first version
 - Logging and metrics: CloudWatch Logs and CloudWatch metrics and alarms
 
-A diagram will be added in `/diagrams`.
+A diagram will be added in `/diagrams`.  
 See: [Architecture diagram](diagrams/architecture.md)
 
-## Deployment and Operations Docs
+## Current Deployed State
+Project 1 is deployed on **ECS Fargate** behind an **Application Load Balancer** in `us-west-1`.
 
+| Detail | Value |
+|--------|-------|
+| ECS service | `aws-hosted-app-service` |
+| ECS cluster | `aws-hosted-app-cluster` |
+| Task definition | `aws-hosted-app:2` |
+| Target group | `aws-hosted-app-tg` |
+| Health check path | `/health` |
+| ALB DNS | `aws-hosted-app-alb-[redacted].us-west-1.elb.amazonaws.com` |
+
+## Deployment and Operations Docs
 - [Deploy plan](docs/deploy-plan.md)
 - [Site down runbook](runbooks/site-down.md)
 - [5xx spike runbook](runbooks/5xx-spike.md)
@@ -39,7 +49,7 @@ See: [Architecture diagram](diagrams/architecture.md)
   - Docker
   - AWS CLI. Optional
 
-## Deploy steps
+## Deploy Steps
 Steps will be documented once the build starts. This section will include:
 - Environment setup. VPC and security
 - Build and push container image. If applicable
@@ -47,14 +57,28 @@ Steps will be documented once the build starts. This section will include:
 - Configure logs and alarms
 - Confirm access
 
-## Validate steps
-This section will include:
+## Validate Steps
+Use the ALB DNS to validate the deployment.
+
+**Health endpoint**
+```bash
+curl -i http://aws-hosted-app-alb-[redacted].us-west-1.elb.amazonaws.com/health
+```
+Expected: `200 OK` — body: `ok`
+
+**Root endpoint**
+```bash
+curl -i http://aws-hosted-app-alb-[redacted].us-west-1.elb.amazonaws.com/
+```
+Expected: `200 OK` — body: `hello`
+
+Additional validation checklist:
 - Health check endpoint test
 - Expected HTTP responses
 - Log verification in CloudWatch
 - Alarm verification using a test scenario
 
-## Monitoring and alerts
+## Monitoring and Alerts
 Planned monitoring includes:
 - CloudWatch dashboard for key metrics
 - Alarms for common failure modes:
@@ -63,7 +87,7 @@ Planned monitoring includes:
   - Resource pressure
 - Log retention settings to control cost
 
-## Security notes
+## Security Notes
 Planned security items include:
 - No long-lived access keys for deployment
 - IAM roles for compute where possible
@@ -81,5 +105,5 @@ Runbooks will be stored in `/runbooks` and will cover:
 ## Teardown
 This repo will include step-by-step teardown instructions to avoid unexpected AWS charges.
 
-## Lessons learned
+## Lessons Learned
 What worked, what broke, what changed, and how the design would be improved.

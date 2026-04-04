@@ -40,6 +40,7 @@ Project 1 is deployed on **ECS Fargate** behind an **Application Load Balancer**
 - [5xx spike runbook](runbooks/5xx-spike.md)
 - [DNS issues runbook](runbooks/dns-issues.md)
 - [Security group blocking traffic runbook](runbooks/security-group-blocking-traffic.md)
+- [Validation results](docs/validation-results.md)
 
 ## Requirements
 - AWS account with an IAM user. MFA enabled
@@ -106,4 +107,6 @@ Runbooks will be stored in `/runbooks` and will cover:
 This repo will include step-by-step teardown instructions to avoid unexpected AWS charges.
 
 ## Lessons Learned
-What worked, what broke, what changed, and how the design would be improved.
+- The ECS service can be created successfully even when the container still fails at runtime, so service creation alone is not proof that the app is healthy.
+- The first failed deployment was caused by a CPU architecture mismatch. Updating the task definition to use the ARM64 runtime platform fixed the `exec format error`.
+- The fastest checks were ECS service events, target health, and CloudWatch Logs.

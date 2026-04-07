@@ -83,8 +83,46 @@ Confirm all of the following before closing the incident:
 - [ ] No errors or crashes in CloudWatch Logs
 - [ ] No active `HTTPCode_ELB_5XX_Count` or `HTTPCode_Target_5XX_Count` alarms
 
+---
+
+## Project 1 Live Signals Reference
+
+This section documents the observed healthy baseline and triage order for the Project 1 deployment (ECS Fargate + ALB). Use it as a quick-reference when responding to a site-down event.
+
+### Healthy Baseline
+
+A confirmed healthy state for this deployment looks like:
+
+| Signal | Expected Value |
+|---|---|
+| ECS desired / running / pending | `1 / 1 / 0` |
+| Target group health | Healthy |
+| `/health` response | `200` |
+| `/` response | `200` |
+| CloudWatch Logs | Repeated `/health 200` entries, no errors |
+
+### Recommended Triage Order
+
+When the site is down, compare current state against the baseline above in this order:
+
+1. **CloudWatch alarm state** — check `HealthyHostCount` alarm and `ALB 5xx` alarm first to understand scope
+2. **ECS service counts** — confirm desired / running / pending match `1 / 1 / 0`; mismatches indicate task failures or a stuck deployment
+3. **Target group health** — an unhealthy or missing target narrows the cause quickly given the ALB-fronted architecture
+4. **CloudWatch Logs** (`/ecs/aws-hosted-app`) — look for startup errors, crashes, or a drop in `/health 200` entries
+5. **Direct endpoint validation** — if the service is still partially reachable, curl `/health` and `/` to confirm application-level response
+
+### Which Alarm Fires First
+
+- **`HealthyHostCount` alarm** — most likely first trigger if the target group loses all healthy targets
+- **ALB 5xx alarm** — fires if the load balancer begins generating its own error responses (separate from target-side errors)
+
+Both alarms should be treated as immediate escalation signals. If only the ALB 5xx alarm fires, check whether the target is still healthy and the error is originating from the load balancer layer itself.
+
+---
+
 ## Related Runbooks
 
 - [5xx spike](5xx-spike.md)
 - [Security group blocking traffic](security-group-blocking-traffic.md)
 - [DNS issues](dns-issues.md)
+

@@ -41,6 +41,7 @@ Project 1 is deployed on **ECS Fargate** behind an **Application Load Balancer**
 - [DNS issues runbook](runbooks/dns-issues.md)
 - [Security group blocking traffic runbook](runbooks/security-group-blocking-traffic.md)
 - [Validation results](docs/validation-results.md)
+- [Teardown steps](docs/teardown.md)
 
 ## Requirements
 - AWS account with an IAM user. MFA enabled

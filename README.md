@@ -42,6 +42,7 @@ Project 1 is deployed on **ECS Fargate** behind an **Application Load Balancer**
 - [Security group blocking traffic runbook](runbooks/security-group-blocking-traffic.md)
 - [Validation results](docs/validation-results.md)
 - [Teardown steps](docs/teardown.md)
+- [Alarm verification plan](docs/alarm-verification-plan.md)
 
 ## Requirements
 - AWS account with an IAM user. MFA enabled
